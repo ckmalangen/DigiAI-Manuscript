@@ -11,7 +11,7 @@
 \usepackage{graphicx}
 
 \usepackage{units}
-\usepackage{parskip}
+\usepackage[indent=1.5em]{parskip}
 \usepackage{graphicx}
 \usepackage{subfigure} 
 \usepackage{url}  
@@ -115,18 +115,6 @@ Allen Jason Tan
 
 %Your abstract goes here...
 Convolutional neural networks (CNNs) are widely used for vision and spatial tasks in machine learning and are typically accelerated with systolic array architectures. Feeding 4-dimensional matrix data to the systolic arrays requires reshaping into a 1-dimensional memory space, implying different mapping schemes. NCHW unrolls the input-spatial dimensions (height and width) first while NHWC unrolls the input-channel (C) dimension first. Previous hardware accelerator studies have examined data layout trade-offs, but comparisons of NCHW- and NHWC-based mappings in FPGA-based systolic arrays remain limited. This study compares NCHW- and NHWC-based implementations for CNN inference, using weight-stationary systolic arrays targeting the Artix-7 XC7A200T FPGA on the Nexys Video board. The comparison explores how these architectures affect execution time, resource utilization, power, energy, latency, and estimated maximum operating frequency. The study aims to optimize the layer dimensions and hardware configurations under which each implementation is efficient and explain the architectural mechanisms responsible for their performance and hardware-cost trade-offs.
-
-The proposal document must contain the following: 
-\begin{itemize}
-    \item Abstract
-    \item Introduction (including background and motivation)
-    \item Review of Related Work
-    \item Problem Statement and Objectives
-    \item Proposed Methodology with Preliminary Results
-    \item Proposed Timeline and Deliverables
-\end{itemize}
-
-Note that the Introduction  and Review of Related Work chapter titles need not be as specified, but covers such content.
 
 \abstractsignature\end{abstract}
 
