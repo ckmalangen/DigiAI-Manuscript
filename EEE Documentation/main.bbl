@@ -1,0 +1,141 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated as
+% required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+\datalist[entry]{none/global//global/global/global}
+  \entry{circuitikz_howto}{online}{}{}
+    \name{author}{4}{}{%
+      {{hash=RMA}{%
+         family={Redaelli},
+         familyi={R\bibinitperiod},
+         given={Massimo\bibnamedelima A.},
+         giveni={M\bibinitperiod\bibinitdelim A\bibinitperiod},
+      }}%
+      {{hash=LS}{%
+         family={Lindner},
+         familyi={L\bibinitperiod},
+         given={Stefan},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=ES}{%
+         family={Erhardt},
+         familyi={E\bibinitperiod},
+         given={Stefan},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=GR}{%
+         family={Giannetti},
+         familyi={G\bibinitperiod},
+         given={Romano},
+         giveni={R\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{RMA+1}
+    \strng{fullhash}{RMALSESGR1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{{CircuiTikZ}}
+    \verb{url}
+    \verb http://texdoc.net/texmf-dist/doc/latex/circuitikz/circuitikzmanual.pd
+    \verb f
+    \endverb
+    \field{month}{11}
+    \field{year}{2019}
+  \endentry
+
+  \entry{tikz_howto}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=TT}{%
+         family={Tantau},
+         familyi={T\bibinitperiod},
+         given={Till},
+         giveni={T\bibinitperiod},
+      }}%
+    }
+    \list{organization}{1}{%
+      {University of Luebeck}%
+    }
+    \strng{namehash}{TT1}
+    \strng{fullhash}{TT1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{{TikZ and PGF}}
+    \verb{url}
+    \verb https://www.bu.edu/math/files/2013/08/tikzpgfmanual.pdf
+    \endverb
+    \field{month}{06}
+    \field{year}{2007}
+  \endentry
+
+  \entry{bibtex_howto}{online}{}{}
+    \name{author}{1}{}{%
+      {{hash=SM}{%
+         family={Shell},
+         familyi={S\bibinitperiod},
+         given={Michael},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \list{organization}{2}{%
+      {Institute of Electrical}%
+      {Electronics Engineers}%
+    }
+    \strng{namehash}{SM1}
+    \strng{fullhash}{SM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{title}{{How to Use the IEEEtran BIBTEX Style}}
+    \verb{url}
+    \verb ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/IEEEtran/bibt
+    \verb ex/IEEEtran_bst_HOWTO.pdf
+    \endverb
+    \field{month}{12}
+    \field{year}{2020}
+  \endentry
+
+  \entry{quitevis_ambatali}{inproceedings}{}{}
+    \name{author}{2}{}{%
+      {{hash=QCP}{%
+         family={{Quitevis}},
+         familyi={Q\bibinitperiod},
+         given={C.\bibnamedelima P.},
+         giveni={C\bibinitperiod\bibinitdelim P\bibinitperiod},
+      }}%
+      {{hash=ACD}{%
+         family={{Ambatali}},
+         familyi={A\bibinitperiod},
+         given={C.\bibnamedelima D.},
+         giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod},
+      }}%
+    }
+    \keyw{cellular radio;disasters;radio equipment;radio transmitters;robust communication system;cellular systems;rescue operations;cellular phones;emergency response teams;local government units;cellular service;volcano eruptions;earthquakes;natural calamities;disaster-prone country;Philippines;portable emergency communications device;handheld amateur radio;APRS message;amateur radio equipment;Automatic Packet Reporting System broadcast;RPi;Raspberry Pi;Frequency modulation;Economic indicators;Sociology;Statistics;Harmonic analysis;Tropical cyclones;disaster communication;amateur radio;automatic packet reporting system;raspberry pi}
+    \strng{namehash}{QCPACD1}
+    \strng{fullhash}{QCPACD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{booktitle}{2018 IEEE Global Humanitarian Technology Conference (GHTC)}
+    \verb{doi}
+    \verb 10.1109/GHTC.2018.8601888
+    \endverb
+    \field{issn}{2377-6919}
+    \field{pages}{1\bibrangedash 6}
+    \field{title}{Feasibility of an Amateur Radio Transmitter Implementation Using Raspberry Pi for a Low Cost and Portable Emergency Communications Device}
+    \field{year}{2018}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+\enddatalist
+\endinput
