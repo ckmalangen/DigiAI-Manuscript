@@ -68,43 +68,53 @@
 %%
 
 %% Place project title here
-\title{EEE 190 Proposal Manuscript Template} 
+\title{Comparing NCHW and NHWC Mappings in FPGA-Based CNN Inference Accelerators Using Weight-Stationary Systolic Arrays} 
 
 %%
 %% Author information
 
+
 \author{
-Charleston Dale M. Ambatali\\ 2011-09217\\ \emph{BS Electronics and Communications Engineering} \and
+Gavin Christian Montevirgen\\ 2023-04094\\ \emph{BS Computer Engineering} \and
+Jonelle Cyrille Bino\\ insert here\\ \emph{BS Computer Engineering} \and
+Collette Mala\~{n}gen\\ 2023-03303\\ \emph{BS Computer Engineering}
 }
+
 
 %%
 %% Month and year of submission/graduation
-\degreeyear{2019} 
+\degreeyear{2026} 
 \degreesemester{December} 
 
 % Put your advisers here:
 \chair{Joel Joseph S. Marciano}
-\othermembers{Adviser 2\\ 
-Adviser 3} 
-\numberofmembers{3}
+\othermembers{
+Anastacia Alvarez\\
+Adelson Chua\\
+Carl Aries Oliva\\\
+Jose Francois Abedejos\\
+Allen Jason Tan
+}
+\numberofmembers{6}
 
-\field{Electrical/Computer/Electronics and Communications Engineering} 
+
+\field{Computer Engineering} 
 \campus{Diliman} 
 
 \maketitle
 
 % uncomment the following four lines once you need to submit your approved 198/199 manuscript after the final assessment
-\newgeometry{verbose,tmargin=0.5in,bmargin=1in,lmargin=0.5in,rmargin=0.5in}
-\input{EEE Documentation/198_199_frontmatter/Page1_UP_IPR_Disclosure_Form}
-\input{EEE Documentation/198_199_frontmatter/Approval_Form}
-\input{EEE Documentation/198_199_frontmatter/Page2_UP_Permissions_Page}
-\input{EEE Documentation/198_199_frontmatter/Acknowledgement}
-\restoregeometry
+%\newgeometry{verbose,tmargin=0.5in,bmargin=1in,lmargin=0.5in,rmargin=0.5in}
+%\input{EEE Documentation/198_199_frontmatter/Page1_UP_IPR_Disclosure_Form}
+%\input{EEE Documentation/198_199_frontmatter/Approval_Form}
+%\input{EEE Documentation/198_199_frontmatter/Page2_UP_Permissions_Page}
+%\input{EEE Documentation/198_199_frontmatter/Acknowledgement}
+%\restoregeometry
 
 \begin{abstract} 
 
 %Your abstract goes here...
-In a \emph{single} well-written paragraph, this is what we'd like to do.  Try to cover Need, Solution, Differentiation, Benefit (NSDB).  Use the content of this template as an example for formatting your proposal document, \textbf{NOT} as a strict guide for the flow of your discussion and what your proposal must contain.
+Convolutional neural networks (CNNs) are widely used for vision and spatial tasks in machine learning and are typically accelerated with systolic array architectures. Feeding 4-dimensional matrix data to the systolic arrays requires reshaping into a 1-dimensional memory space, implying different mapping schemes. NCHW unrolls the input-spatial dimensions (height and width) first while NHWC unrolls the input-channel (C) dimension first. Previous hardware accelerator studies have examined data layout trade-offs, but comparisons of NCHW- and NHWC-based mappings in FPGA-based systolic arrays remain limited. This study compares NCHW- and NHWC-based implementations for CNN inference, using weight-stationary systolic arrays targeting the Artix-7 XC7A200T FPGA on the Nexys Video board. The comparison explores how these architectures affect execution time, resource utilization, power, energy, latency, and estimated maximum operating frequency. The study aims to optimize the layer dimensions and hardware configurations under which each implementation is efficient and explain the architectural mechanisms responsible for their performance and hardware-cost trade-offs.
 
 The proposal document must contain the following: 
 \begin{itemize}
