@@ -206,7 +206,7 @@ element (PE) utilization, FPGA resource utilization, and board energy.
 
 \section{Tensor Dimension Labeling Conventions}
 
-The dimensions of each tensor will be labeled as shown in Table~\ref{tab:tensor-dimensions}.
+This section describes the tensor dimensions and their labels, as shown in Table~\ref{tab:tensor-dimensions}.
 
 \begin{table}[H]
     \centering
@@ -226,6 +226,9 @@ The dimensions of each tensor will be labeled as shown in Table~\ref{tab:tensor-
 \end{table}
 
 \section{Implementations}
+
+This section describes the lowering methods and architectures, including their common
+configurations and tiling loop.
 
 \subsection{Lowering Methods}
 
@@ -364,8 +367,8 @@ The tile size limits are described in Table~\ref{tab:tile-size-limits}.
 
 Figure~\ref{fig:nchw-architecture} describes the NCHW accelerator’s architecture. DDR memory
 will hold the layer descriptors and tensors, and the DMA engine will move data between DDR and the
-accelerator. The topmost modules’ jobs are described in the figure. The \texttt{conv\_core} module
-contains the systolic array, the banked SRAMs, the weight loader, the activation feeder, address
+accelerator. The topmost modules’ jobs are described in Figure~\ref{fig:nchw-architecture}.
+The \texttt{conv\_core} module contains the systolic array, the banked SRAMs, the weight loader, the activation feeder, address
 generator, and output accumulators. For each output position, the address generator computes the
 bank and word address needed to fetch the input activation required per PE row. The activation
 feeder contains the bank service logic to handle bank conflicts and the crossbar to route data from
@@ -440,6 +443,8 @@ bank service logic, and two activation vector slots.
 
 \section{Implementation on the Nexys Video Board}
 
+This section describes the board build and DDR setup, the clocks to test, and test automation.
+
 \subsection{Board Build and DDR}
 
 Vivado 2026.1 will be used and the Nexys Video Artix-7 will be targeted. Its onboard DDR3 memory
@@ -472,10 +477,11 @@ measurement window.
 
 \section{Sweeps}
 
-Layer-dimension sweeps and hardware configuration sweeps will be done on both architectures. The
-same randomly-generated tensors will be tested to ensure fairness in comparison. All cases have
-padding at 0, dilation at 1, and stride at 1. The split of 1:1:4 between the input,
-kernel, and output SRAMs in Table~\ref{tab:common-configurations} will also apply.
+This section describes the layer-dimension sweeps and hardware configuration sweeps that will be done
+on both architectures. The same randomly-generated tensors will be tested to ensure fairness in
+comparison. We will save the input and kernel tensors for each case and record the random seed
+used to generate them. All cases have padding at 0, dilation at 1, and stride at 1. The split
+of 1:1:4 between the input, kernel, and output SRAMs in Table~\ref{tab:common-configurations} will also apply.
 
 \subsection{Layer Dimensions Sweep}
 
@@ -555,15 +561,15 @@ architectures given the same layer.
 \subsection{Total Cases}
 
 Summing the cases from Tables~\ref{tab:layer-sweeps} and~\ref{tab:hardware-sweep} and counting
-overlapping cases once, we get 215 runs per architecture, making 430 runs. Then, with two
-clock conditions to test on, we get 860 board cases.
+overlapping cases once, we get 215 cases per architecture, making 430 cases. Then, with two
+clock conditions to test on, we get up to 860 board cases.
 
 \section{Model Benchmarks}
 
-Benchmarks on two models, MNIST CNN and All-CNN-C on CIFAR-10, will be done to test how the two
-architectures’ performance tradeoffs carry over to actual networks. Tests will be run on the same
-hardware configuration of a 10~×~10 systolic array with 15~KiB on-chip memory. Training and
-calibration of the networks will be done via Keras on Python.
+This section describes the benchmarks that will be done on two models, MNIST CNN and All-CNN-C
+on CIFAR-10, to test how the two architectures’ performance tradeoffs carry over to actual networks.
+Tests will be run on the same hardware configuration of a 10~×~10 systolic array with 15~KiB
+on-chip memory. Training and calibration of the networks will be done via Keras on Python.
 
 \subsection{Network Details}
 
@@ -803,24 +809,31 @@ For calibration, we will run each trained floating-point model through inference
 images to obtain the largest absolute values for the input and each intermediate output we quantize.
 We will find the largest absolute weight in each layer directly from the trained weights. We will
 divide these largest absolute values by 127 to get the input, weight, and output scales. When a layer’s output
-is used as the input to the next layer, a scaling factor is computed for that layer using the equation
-below. The factor converts the accumulated result to the next layer’s input
+is used as the input to the next layer, a scaling factor is computed for that layer using
+Equation~\eqref{eq:requantization-scale}. The factor converts the accumulated result to the next layer’s input
 scale~\cite{jacob2018quantization}:
 
-\[\text{scaling factor} = \frac{\text{input scale} \times \text{weight scale}}{\text{output scale}}\]
+\begin{equation}
+  \text{scaling factor} = \frac{\text{input scale} \times \text{weight scale}}{\text{output scale}}
+  \label{eq:requantization-scale}
+\end{equation}
 
 On export, we will convert the trained weights to INT8 by dividing them by their weight scale and
 rounding. We will also convert each bias to INT32 by dividing it by the bias scale (input scale x weight
 scale) and rounding. The computed scaling factors per layer will be approximated using an integer
-multiplier and a right shift as well, as shown below~\cite{jacob2018quantization}:
+multiplier and a right shift as well, as shown in Equation~\eqref{eq:multiplier-shift}~\cite{jacob2018quantization}:
 
-\[\text{scaling factor} = 2^{-(\text{right shift})} \times \text{multiplier}\]
+\begin{equation}
+  \text{scaling factor} = 2^{-(\text{right shift})} \times \text{multiplier}
+  \label{eq:multiplier-shift}
+\end{equation}
 
 Both architectures will use the same exported weights, biases, and scales for each model.
 
 \subsection{Input Image Preparation}
 
-For each model, one test image will be selected, preprocessed, and saved for testing. For MNIST, the
+For each model, one test image will be selected, preprocessed, and saved for testing. We will
+record the test image used along with its index and label in the test set. For MNIST, the
 pixel values of the 28~×~28 grayscale image will be scaled to [0,1]. For All-CNN-C, we will apply global
 contrast normalization to its 32~×~32 RGB image, followed by a ZCA whitening transform fitted on the
 training images. Each preprocessed image will then be quantized to INT8 by dividing its values by
@@ -829,18 +842,20 @@ be used for both architectures and clock conditions.
 
 \section{Metrics and Paired Analysis}
 
-We will measure the accuracy of the models, and the correctness, latency, PE utilization, cycle
-counts, and FPGA resource utilization of our architectures.
+This section describes how we will measure the accuracy of the models, and the correctness,
+latency, PE utilization, cycle counts, and FPGA resource utilization of our architectures.
 
 \subsection{Correctness}
 
-The outputs of the sweeps and model benchmarks will be tested to match against independent integer
-references.
+The FPGA outputs of the sweeps and model benchmarks will be tested for an exact match against
+independent integer references generated via Python. These references will model the same data types and
+requantization on output-write described in Table~\ref{tab:common-configurations}
 
 \subsection{Model Accuracy}
 
-We will report the accuracy of each model against each one’s full test set for both its
-floating-point and its quantized models.
+We will report the accuracy of each model on its full test set for both its floating-point and
+quantized versions. We will evaluate both versions in software, using the independent integer
+reference for the quantized version.
 
 \subsection{Latency Measurements}
 
@@ -865,9 +880,13 @@ We will report mean, standard deviation, and median across timed runs~\cite{ji20
 
 \subsection{PE Utilization in Core Execution}
 
-PE utilization will be measured during core execution. The below formula describes PE utilization:
+PE utilization will be measured during core execution. The formula in
+Equation~\eqref{eq:pe-utilization} describes PE utilization.
 
-\[\text{PE utilization} = \frac{\text{useful MACs}}{\text{physical PEs} \times \text{total core execution cycles}}\]
+\begin{equation}
+  \text{PE utilization} = \frac{\text{useful MACs}}{\text{physical PEs} \times \text{total core execution cycles}}
+  \label{eq:pe-utilization}
+\end{equation}
 
 A multiply-and-accumulate (MAC) operation is considered useful if its input is within bounds (not a
 padding zero) and contributes to the output. We will report total useful MACs, useful MACs per
@@ -900,12 +919,16 @@ power by dividing the energy by the length of the GPIO-marked window.
 \subsection{Paired Analysis}
 
 For every case, we will show the raw values, which mapping leads or ties in each metric, and the
-percentage change relative to NCHW. The formula describing percentage-change is shown below.
+percentage change relative to NCHW. The formula describing percentage change is shown in
+Equation~\eqref{eq:percentage-change}.
 \begin{equation}
   \text{Percentage change (\%)} = 100 \times
   \frac{\text{NHWC value} - \text{NCHW value}}{\text{NCHW value}}.
   \label{eq:percentage-change}
 \end{equation}
+
+A positive percentage change means the NHWC value is higher. If the NCHW value is zero, we will
+report the absolute difference in the metric’s original units.
 
 We will also compare cycle counts and latency at the common 20~MHz clock and at each build’s
 highest verified clock. We will favor lower cycles, latency, traffic, resource use, measured energy,
