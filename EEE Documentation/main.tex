@@ -129,22 +129,26 @@ Convolutional neural networks (CNNs) are widely used for vision and spatial task
 \cleardoublepage{}
 \chapter{Introduction\label{cha:Introduction}}
 
-This part of your proposal introduces the different concepts needed to be known by the reader for them to understand the problem you are trying to solve. Note that this may be the last chapter you will write when writing the proposal since it covers the summary of the entire proposal.
-
-This chapter title need not be as specified, but covers such content.
-
-
 \section{Background of Neural Networks}
 \label{section:sec01_01}
-An Artificial Neural Network (ANN) is a computational model used for machine learning systems consisting of interconnected artificial neurons that imitate the neurons in human brains and forms layers to learn with pattern recognition from training data. Among different neural network architectures, Convolutional Neural Networks (CNNs) have emerged as the standard for vision and spatial tasks due to their high feature-extraction capability
-\section{Image to Column (im2col)}
+Artificial Intelligence (AI) has become a foundational technology across modern computing, allowing systems to perform cognitive tasks ranging from perception to decision-making. Machine Learning (ML) has emerged as a core branch of AI specializing in learning statistical patterns to make predictions directly from data without explicit programmed instructions. As datasets and problem complexity have become increasingly complicated, deep learning, a subset of ML, has become the staple to learn complex patterns directly from large amounts of data as it can automatically extract features from raw inputs like images, audio, and text. 
+
+An Artificial Neural Network (ANN) is a computational model used for deep learning systems consisting of interconnected artificial neurons that imitate the neurons in human brains and forms layers to learn with pattern recognition from training data. Among different neural network architectures, Convolutional Neural Networks (CNNs) have emerged as the standard for vision and spatial tasks due to their high feature-extraction capability. However, CNN inference and training requires rigorous multiply-accumulate (MAC) operations that overwhelm standard general-purpose Central Processing Units (CPUs). In order to handle the computational load and accelerate deep learning tasks, specialized machine learning accelerators have been developed. Although these accelerators can reach high peak compute density, they lose efficiency because of memory bottlenecks since energy consumption and execution latency are dominated by off-chip and on-chip memory accesses rather than arithmetic computations. Consequently, studies regarding architectural optimizations focus on exploiting data reuse to minimize data movement.
+
+\section{Field-Programmable Gate Array Implementations}
 \label{section:sec01_02}
 
-\section{Memory Mappings}
-\label{section:sec01_03}
+When developing specialized ML accelerators, Field-Programmable Gate Arrays (FPGAs) help provide a reconfigurable hardware platform well-suited for implementing under strict area, power, and memory constraints. Unlike general-purpose CPUs and Graphics Processing Units (GPUs) which rely on fixed memory hierarchies and large off-chip capacities to support large models, FPGAs allow direct customization of both hardware logic and on-chip memory. This flexibility makes FPGAs more suitable for exploring much denser and resource-efficient accelerator designs.
 
-\section{}
+\section{Systolic Arrays and Image-to-Column}
 \label{section:sec01_03}
+Systolic array architectures accelerate deep learning workloads by interconnecting MAC units into a 2D grid, allowing input data and partial sums to pulse from one processing element (PE) to another, minimizing expensive memory accesses. To map multi-dimensional CNN convolutions efficiently onto systolic arrays, the Image-to-Column (im2col) method can be used. Flattening and unrolling 4D Input Feature Maps (IFMaps) and weight filters into 2D matrices help transform sliding-window convolution operations into standard General Matrix Multiplication (GEMM) operations. By converting convolutions into GEMM, the data can be streamed rhythmically across the systolic array's 2D grid of PEs, maximizing PE utilization, simplifying control logic, and enabling high spatial and temporal data reuse across rows and columns.
+
+While standard or explicit im2col simplifies the convolutions into GEMM, it requires lowering the entire 4D IFMap in software before execution and overlapping receptive-field values to be duplicated into memory multiple times, increasing memory requirements. To mitigate off-chip memory expansion, on-the-fly im2col dynamically assembles lowered matrix tiles inside dedicated on-chip scratchpad buffers immediately before feeding the systolic array. However, it still incurs redundant on-chip memory storage, staging delays, and extra buffer-management logic. To overcome these limitations entirely, implicit im2col can be used which uses Address Generation Units (AGUs) to calculate the matrix coordinates from the original IFMap to stream activations directly into systolic arrays without materializing the matrix memory and avoiding data duplication.
+
+\section{Research Gaps}
+\label{section:sec01_04}
+Since implicit im2col relies on real-time address calculation rather than physical data duplication, the underlying memory layout of the 4D tensor regulates memory accesses, bank conflicts, and AGU complexity.  Two of the most notable layouts are NHWC (Batch, Height, Width, Channel), which groups all channels of the same pixel together in memory, and NCHW (Batch, Channel, Height, Width), which groups pixels of the same channel together. While existing studies have examined the comparisons of NHWC and NCHW layouts across various CNN architectures, how they behave within FPGA-based weight-stationary systolic arrays utilizing implicit im2col remains largely uncharacterized. To bridge this gap, this study aims to conduct a systematic evaluation of NHWC- and NCHW-based implicit im2col architectures across varying layer dimensions, systolic array sizes, and on-chip memory capacities to analyze their trade-offs in execution performance, PE utilization, FPGA resource utilization, memory efficiency, and energy consumption.
 
 
 \cleardoublepage{}
