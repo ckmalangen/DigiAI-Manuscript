@@ -204,7 +204,7 @@ architectures. Two model benchmarks will also be run on an MNIST CNN and All-CNN
 performance of each architecture will be measured in terms of latency, clock cycles, processing
 element (PE) utilization, FPGA resource utilization, and board energy.
 
-\section{Tensor dimension labeling conventions}
+\section{Tensor Dimension Labeling Conventions}
 
 The dimensions of each tensor will be labeled as shown in Table~\ref{tab:tensor-dimensions}.
 
@@ -227,7 +227,7 @@ The dimensions of each tensor will be labeled as shown in Table~\ref{tab:tensor-
 
 \section{Implementations}
 
-\subsection{Lowering methods}
+\subsection{Lowering Methods}
 
 Figures~\ref{fig:nchw-lowering} and~\ref{fig:nhwc-lowering} show the two implicit im2col lowering
 methods as described by Zhou et al.~\cite{zhou2021implicit}.
@@ -243,7 +243,7 @@ is a flattened filter with filter height and width contiguous.
 \begin{figure} [H]
     \centering
     \includegraphics[width=\linewidth]{figures/methodology/nchw-lowering.pdf}
-    \caption{NCHW lowering.}
+    \caption{NCHW lowering}
     \label{fig:nchw-lowering}
 \end{figure}
 \end{samepage}
@@ -258,14 +258,14 @@ are contiguous. The rows of the lowered kernel matrix are also rearranged accord
 \begin{figure} [H]
     \centering
     \includegraphics[width=\linewidth]{figures/methodology/nhwc-lowering.pdf}
-    \caption{NHWC lowering.}
+    \caption{NHWC lowering}
     \label{fig:nhwc-lowering}
 \end{figure}
 \end{samepage}
 
 \subsection{Architectures}
 
-\subsubsection{Common configurations}
+\subsubsection{Common Configurations}
 
 Table~\ref{tab:common-configurations} lists the settings identical in each paired comparison
 between the two architectures.
@@ -278,7 +278,7 @@ between the two architectures.
         \textbf{Parameter} &
         \textbf{Setting} \\\hline
         External memory tensor order &
-        NCHW\footnotemark[\numexpr\value{footnote}+1\relax] inputs; KCRS weights; NKPQ outputs \\\hline
+        NCHW\textsuperscript{a} inputs; KCRS weights; NKPQ outputs \\\hline
         Data types &
         Signed INT8 inputs and weights, signed INT32 accumulations \\\hline
         Dataflow &
@@ -291,26 +291,28 @@ between the two architectures.
         INT32 accumulation \(\to\) add INT32 bias \(\to\) requantization (multiply, shift, round, INT8
             saturation) \(\to\) ReLU. Bias addition, requantization, and ReLU are applied when enabled. \\\hline
         Layer sequencing &
-        Fetches layer descriptors\footnotemark[\numexpr\value{footnote}+2\relax] sequentially \\\hline
+        Fetches layer descriptors\textsuperscript{b} sequentially \\\hline
         Tiling method &
         Same tile traversal order \\\hline
     \end{tabular}
     \caption{Common configurations}
     \label{tab:common-configurations}
+    \par\smallskip
+    \parbox{.97\linewidth}{%
+        \ssp\footnotesize
+        \hangindent=1em
+        \noindent\makebox[1em][l]{\textsuperscript{a}}%
+        The difference in NCHW and NHWC is seen in the systolic array feeding and on-chip mapping\par
+        \hangindent=1em
+        \noindent\makebox[1em][l]{\textsuperscript{b}}%
+        Layer descriptors are fetched from and stored in DDR memory. Layer descriptors contain the
+        following information needed per layer: layer dimensions, stride, padding, dilation,
+        input/weight/output base addresses, output-write settings, a last flag indicating the current
+        layer is the last layer\par
+    }
 \end{table}
-\stepcounter{footnote}
-\footnotetext{%
-  The difference in NCHW and NHWC is seen in the systolic array feeding and on-chip mapping
-}
-\stepcounter{footnote}
-\footnotetext{%
-  Layer descriptors are fetched from and stored in DDR memory. Layer descriptors contain the
-  following information needed per layer: layer dimensions, stride, padding, dilation,
-  input/weight/output base addresses, output-write settings, a last flag indicating the current
-  layer is the last layer
-}
 
-\subsubsection{Tiling loop}
+\subsubsection{Tiling Loop}
 
 Both architectures use the same output tile traversal order.
 
@@ -370,7 +372,7 @@ retries.
 \begin{figure} [H]
     \centering
     \includegraphics[width=.79\linewidth]{figures/methodology/nchw-architecture.pdf}
-    \caption{NCHW accelerator.}
+    \caption{NCHW accelerator}
     \label{fig:nchw-architecture}
 \end{figure}
 \end{samepage}
@@ -390,7 +392,7 @@ activations for output position 1B.
 \begin{figure} [H]
     \centering
     \includegraphics[width=\linewidth]{figures/methodology/nchw-array.pdf}
-    \caption{NCHW SRAM and systolic array.}
+    \caption{NCHW SRAM and systolic array}
     \label{fig:nchw-array}
 \end{figure}
 \end{samepage}
@@ -408,7 +410,7 @@ vector slots due to how NHWC feeds the input feature map, dedicating one input c
 \begin{figure} [H]
     \centering
     \includegraphics[width=.79\linewidth]{figures/methodology/nhwc-architecture.pdf}
-    \caption{NHWC accelerator.}
+    \caption{NHWC accelerator}
     \label{fig:nhwc-architecture}
 \end{figure}
 \end{samepage}
@@ -426,22 +428,22 @@ bank service logic, and two activation vector slots.
 \begin{figure} [H]
     \centering
     \includegraphics[width=\linewidth]{figures/methodology/nhwc-array.pdf}
-    \caption{NHWC SRAM and systolic array.}
+    \caption{NHWC SRAM and systolic array}
     \label{fig:nhwc-array}
 \end{figure}
 \end{samepage}
 
 \section{Implementation on the Nexys Video Board}
 
-\subsection{Board build and DDR}
+\subsection{Board Build and DDR}
 
 Vivado 2026.1 will be used and the Nexys Video Artix-7 will be targeted. Its onboard DDR3 memory
 will be used. The same DDR controller settings and memory layout will be used across paired
 comparisons to ensure fairness. Fit, timing, and correctness failures will be recorded.
 
-\subsection{Clocks to test}
+\subsection{Clocks to Test}
 
-The sweeps and model benchmarks will be run on both architectures at a common clock 20 MHz and each
+The sweeps and model benchmarks will be run on both architectures at a common clock 20~MHz and each
 architecture’s highest verified clock. The highest verified clock will be the highest tested clock
 that meets routed timing and pass board correctness checks. The post-route WNS will be used to
 estimate this. The Vivado documentation states the following formula for the max
@@ -455,7 +457,7 @@ frequency~\cite{amd2026frequency}:
   \end{aligned}
 \]
 
-\subsection{Test automation}
+\subsection{Test Automation}
 
 The host script will program the FPGA, queue the sweep and model runs, save timing results,
 counters, and power traces. FPGA GPIO signals will be used to mark the start and end of each
@@ -468,10 +470,10 @@ same randomly-generated tensors will be tested to ensure fairness in comparison.
 padding at 0, dilation at 1, and stride at 1. The split of 1:1:4 between the input,
 kernel, and output SRAMs in Table~\ref{tab:common-configurations} will also apply.
 
-\subsection{Layer dimensions sweep}
+\subsection{Layer Dimensions Sweep}
 
 For the sweeps in Table~\ref{tab:layer-sweeps}, the hardware configuration will be kept constant
-at a 10~×~10 systolic array and 15 KiB of on-chip memory.
+at a 10~×~10 systolic array and 15~KiB of on-chip memory.
 
 \begin{table}[H]
     \centering
@@ -484,11 +486,11 @@ at a 10~×~10 systolic array and 15 KiB of on-chip memory.
         input-channel sweep &
         32~×~32 &
         3~×~3 &
-        input-channels: 1-32; \newline output channels: 3 and 10 \\\hline
+        input-channels: 1–32; \newline output channels: 3 and 10 \\\hline
         output-channel sweep &
         32~×~32 &
         3~×~3 &
-        output-channels: 1-32; \newline input channels: 3 and 10 \\\hline
+        output-channels: 1–32; \newline input channels: 3 and 10 \\\hline
         spatial-size sweep &
         8~×~8, 16~×~16, 32~×~32 &
         3~×~3 &
@@ -502,7 +504,7 @@ at a 10~×~10 systolic array and 15 KiB of on-chip memory.
     \label{tab:layer-sweeps}
 \end{table}
 
-\subsection{Hardware configuration sweep}
+\subsection{Hardware Configuration Sweep}
 
 All permutations in Table~\ref{tab:hardware-sweep} will be tested. The kernel size will be held constant at
 3~×~3.
@@ -517,46 +519,46 @@ All permutations in Table~\ref{tab:hardware-sweep} will be tested. The kernel si
         \textbf{Input \(\to\) output channels} \\\hline
         8~×~8, 32~×~32 &
         8~×~8, 10~×~10, 16~×~16 &
-        7.5, 15, 30 KiB &
+        7.5, 15, 30~KiB &
         3 \(\to\) 16\newline 3 \(\to\) 64\newline 64 \(\to\) 16\newline 64 \(\to\) 64 \\\hline
     \end{tabular}
     \caption{Hardware configuration sweep}
     \label{tab:hardware-sweep}
 \end{table}
 
-\subsection{Supporting decisions for sweep choices}
+\subsection{Supporting Decisions for Sweep Choices}
 
-\subsubsection{Input/output channels}
+\subsubsection{Input/Output Channels}
 
 Since PE array utilization is sensitive to the number of input/output channels, it’s given the
-finest sweep. This sweep shows us where each architecture leads in power, energy, latency, and cycle
+finest sweep. This sweep will show us where each architecture leads in power, energy, latency, and cycle
 count.
 
-\subsubsection{Kernel size and spatial size}
+\subsubsection{Kernel Size and Spatial Size}
 
-These were varied at the chosen input and output channel counts to see how kernel and spatial size
-affect performance at high/low input/output channel counts.
+These will be varied at the chosen input and output channel counts to see how kernel and spatial
+size affect performance at high/low input/output channel counts.
 
-\subsubsection{Systolic array size and SRAM sweep}
+\subsubsection{Systolic Array Size and SRAM Sweep}
 
 Similar to how SCALE-Sim~\cite{samajdar2020scalesim} studied varying array size and SRAM capacity,
-we vary these parameters to see how they may affect cycle count and DDR traffic on both
+we will vary these parameters to see how they may affect cycle count and DDR traffic on both
 architectures given the same layer.
 
-\subsection{Total cases}
+\subsection{Total Cases}
 
 Summing the cases from Tables~\ref{tab:layer-sweeps} and~\ref{tab:hardware-sweep} and counting
 overlapping cases once, we get 215 runs per architecture, making 430 runs. Then, with two
 clock conditions to test on, we get 860 board cases.
 
-\section{Model benchmarks}
+\section{Model Benchmarks}
 
 Benchmarks on two models, MNIST CNN and All-CNN-C on CIFAR-10, will be done to test how the two
 architectures’ performance tradeoffs carry over to actual networks. Tests will be run on the same
-hardware configuration of a 10~×~10 systolic array with 15 KiB on-chip memory. Training and
+hardware configuration of a 10~×~10 systolic array with 15~KiB on-chip memory. Training and
 calibration of the networks will be done via Keras on Python.
 
-\subsection{Network details}
+\subsection{Network Details}
 
 \subsubsection{MNIST}
 
@@ -589,7 +591,7 @@ black background.
         2 &
         0 &
         ReLU \\\hline
-        Flatten\footnotemark[\numexpr\value{footnote}+1\relax] &
+        Flatten\textsuperscript{a} &
         1 × 8 × 4 × 4 &
         — &
         1 × 128 × 1 × 1 &
@@ -613,23 +615,29 @@ black background.
     \end{tabular}
     \caption{MNIST CNN network}
     \label{tab:mnist-network}
+    \par\smallskip
+    \parbox{.97\linewidth}{%
+        \ssp\footnotesize
+        \hangindent=1em
+        \noindent\makebox[1em][l]{\textsuperscript{a}}%
+        Only explicitly defined during the Keras training process. In the accelerator, CONV2’s output
+        will be treated as Dense32’s input directly\par
+    }
 \end{table}
-\stepcounter{footnote}
-\footnotetext{%
-  Only explicitly defined during the Keras training process. In the accelerator, CONV2’s output
-  will be treated as Dense32’s input directly
-}
 
-The dense or fully-connected layers were mapped to a convolution as described in Abdelfattah et
-al~\cite{abdelfattah2018dla}. The flattened input is treated as the channels at one spatial
+The dense or fully-connected layers will be mapped to a convolution as described in
+Abdelfattah et al~\cite{abdelfattah2018dla}. The flattened input is treated as the channels at one spatial
 position, with each output neuron computed by a 1~×~1 filter that spans all input channels.
 
+\pagebreak[0]
+\begin{samepage}
 \subsubsection{All-CNN-C for CIFAR-10}
 
 Table~\ref{tab:all-cnn-c-network} summarizes the network. This is based on Springenberg et al.’s section
 on All-CNN-C~\cite{springenberg2015allcnn}. CIFAR-10 maps a 32~×~32 RGB image into ten classes: airplane,
 automobile, bird, cat, deer, dog, frog, horse, ship, truck~\cite{krizhevskyCifar}.
 
+\nopagebreak
 \begin{table}[H]
     \centering
     \begin{tabular}{|C{.65in}|c|c|c|c|c|C{.67in}|}
@@ -708,24 +716,28 @@ automobile, bird, cat, deer, dog, frog, horse, ship, truck~\cite{krizhevskyCifar
         1 × 10 × 6 × 6 &
         — &
         1 × 10 × 1 × 1 &
-        – &
-        – &
+        — &
+        — &
         Argmax \\\hline
     \end{tabular}
     \caption{All-CNN-C network}
     \label{tab:all-cnn-c-network}
 \end{table}
+\end{samepage}
 
 The global average pooling layer in the end will be mapped to a convolution by treating
 Conv9’s 1~×~10~×~6~×~6 output as a 10~×~1~×~6~×~6 input, then convolving it with a
 1~×~1~×~6~×~6 filter filled with ones at stride 1, dilation 1, and zero padding. The output will
-then be 10~×~1~×~1~×~1, with one INT32 sum per class. We take the argmax of these sums. This method
+then be 10~×~1~×~1~×~1, with one INT32 sum per class. We will take the argmax of these sums. This method
 adapts Abdelfattah et al.’s approach~\cite{abdelfattah2018dla}.
 
+\pagebreak[0]
+\begin{samepage}
 \subsection{Training}
 
 Table~\ref{tab:training-settings} summarizes the training details for both models to be tested.
 
+\nopagebreak
 \begin{table}[H]
     \centering
     \begin{tabular}{|L{1.25in}|L{1.82in}|L{2.85in}|}
@@ -737,62 +749,61 @@ Table~\ref{tab:training-settings} summarizes the training details for both model
         Keras~\cite{kerasMnist} &
         Keras~\cite{kerasCifar10} \\\hline
         Dataset allocation\newline (training / validation / test) &
-        48,000 / 12,000 / 10,000\newline 0.2 validation
+        48,000 / 12,000 / 10,000;\newline 0.2 validation
             split~\cite{khan2024mnist,ridgeway2019recombination,luza2022radiation} &
-        45,000 / 5,000 / 10,000\newline 500 images per class held out for validation (Bingham and
-            Miikkulainen, 2022, Appendix A.5)~\cite{bingham2022parametric} \\\hline
+        45,000 / 5,000 / 10,000;\newline 500 images per class held out for
+            validation~\mbox{\cite[Appendix~A.5]{bingham2022parametric}} \\\hline
         Preprocessing &
         Scale pixel values to [0, 1] &
-        Global contrast normalization then ZCA whitening fitted on the training images (Goodfellow et
-            al., §5.2)~\cite{goodfellow2013maxout} \\\hline
+        Global contrast normalization then ZCA whitening fitted on the training
+            images~\mbox{\cite[Sec.~5.2]{goodfellow2013maxout}} \\\hline
         Data augmentation &
         None &
-        Random horizontal flips and random translations of up to five pixels along each axis
-            (Springenberg et al., §3.2.1)~\cite{springenberg2015allcnn} \\\hline
+        Random horizontal flips and random translations of up to five pixels along each
+            axis~\mbox{\cite[Sec.~3.2.1]{springenberg2015allcnn}} \\\hline
         Regularization &
         None &
-        L2 regularization of 0.001 to weights\newline 0.2 dropout probability on input, then 0.5 after
-            Conv 3 and Conv 6 (Springenberg et al., §3.2.1)~\cite{springenberg2015allcnn} \\\hline
+        L2 regularization of 0.001 to weights;\newline 0.2 dropout probability on input, then 0.5 after
+            Conv 3 and Conv 6~\mbox{\cite[Sec.~3.2.1]{springenberg2015allcnn}} \\\hline
         Optimizer &
         Adam &
-        Stochastic gradient descent, momentum 0.9 (Springenberg et al.,
-            §3.2.1)~\cite{springenberg2015allcnn} \\\hline
+        Stochastic gradient descent; momentum 0.9~\mbox{\cite[Sec.~3.2.1]{springenberg2015allcnn}} \\\hline
         Batch size &
-        128 &
-        128 (Bingham and Miikkulainen, 2023, Table 5)~\cite{bingham2023surrogate} \\\hline
+        100~\cite{ufMnist} &
+        128~\mbox{\cite[Table~5]{bingham2023surrogate}} \\\hline
         Learning rate and epochs &
-        40 epochs with Adam learning rate at 0.001 (Keras Adam default)~\cite{kerasAdam} &
-        Test initial learning rates 0.01, 0.05, 0.1, 0.25. Multiply by 0.1 after epochs 200, 250,
-            300.\newline 350 epochs total per learning rate (Springenberg et al.,
-            §3.2.1)~\cite{springenberg2015allcnn} \\\hline
+        40 epochs; Adam learning rate at 0.001~\cite{ufMnist} &
+        Test initial learning rates 0.01, 0.05, 0.1, 0.25; multiply by 0.1 after epochs 200, 250,
+            300;\newline 350 epochs total per learning rate~\mbox{\cite[Sec.~3.2.1]{springenberg2015allcnn}} \\\hline
         Checkpoint selection &
-        Pick lowest validation loss (epoch 17) &
+        Pick lowest validation loss &
         Pick learning rate and checkpoint with lowest validation loss \\\hline
     \end{tabular}
     \caption{Training settings}
     \label{tab:training-settings}
 \end{table}
+\end{samepage}
 
 Upon completion of training, each convolutional and dense layer will have learned weights and one
-bias per output channel..
+bias per output channel.
 
-\subsection{Calibration, quantization, and exporting}
+\subsection{Calibration, Quantization, and Exporting}
 
 The trained networks, which use floating-point data, will require calibration and quantization
 before they can be run in the two architectures.
 
-For calibration, we run each trained floating-point model through inference on its training images
-to obtain the largest absolute values for the input and each intermediate output we quantize. We
-find the largest absolute weight in each layer directly from the trained weights. We divide these
-largest absolute values by 127 to get the input, weight, and output scales. When a layer’s output is
-used as the input to the next layer, a scaling factor is computed for that layer using the equation
+For calibration, we will run each trained floating-point model through inference on its training
+images to obtain the largest absolute values for the input and each intermediate output we quantize.
+We will find the largest absolute weight in each layer directly from the trained weights. We will
+divide these largest absolute values by 127 to get the input, weight, and output scales. When a layer’s output
+is used as the input to the next layer, a scaling factor is computed for that layer using the equation
 below. The factor converts the accumulated result to the next layer’s input
 scale~\cite{jacob2018quantization}:
 
 \[\text{scaling factor} = \frac{\text{input scale} \times \text{weight scale}}{\text{output scale}}\]
 
-On export, we convert the trained weights to INT8 by dividing them by their weight scale and
-rounding. We also convert each bias to INT32 by dividing it by the bias scale (input scale x weight
+On export, we will convert the trained weights to INT8 by dividing them by their weight scale and
+rounding. We will also convert each bias to INT32 by dividing it by the bias scale (input scale x weight
 scale) and rounding. The computed scaling factors per layer will be approximated using an integer
 multiplier and a right shift as well, as shown below~\cite{jacob2018quantization}:
 
@@ -800,16 +811,16 @@ multiplier and a right shift as well, as shown below~\cite{jacob2018quantization
 
 Both architectures will use the same exported weights, biases, and scales for each model.
 
-\subsection{Input image preparation}
+\subsection{Input Image Preparation}
 
 For each model, one test image will be selected, preprocessed, and saved for testing. For MNIST, the
-pixel values of the 28~×~28 grayscale image will be scaled to [0,1]. For All-CNN-C, we apply global
+pixel values of the 28~×~28 grayscale image will be scaled to [0,1]. For All-CNN-C, we will apply global
 contrast normalization to its 32~×~32 RGB image, followed by a ZCA whitening transform fitted on the
 training images. Each preprocessed image will then be quantized to INT8 by dividing its values by
 the model’s input scale, rounding, and clipping to the quantized range. The same saved inputs will
 be used for both architectures and clock conditions.
 
-\section{Metrics and paired analysis}
+\section{Metrics and Paired Analysis}
 
 We will measure the accuracy of the models, and the correctness, latency, PE utilization, cycle
 counts, and FPGA resource utilization of our architectures.
@@ -819,33 +830,33 @@ counts, and FPGA resource utilization of our architectures.
 The outputs of the sweeps and model benchmarks will be tested to match against independent integer
 references.
 
-\subsection{Model accuracy}
+\subsection{Model Accuracy}
 
 We will report the accuracy of each model against each one’s full test set for both its
 floating-point and its quantized models.
 
-\subsection{Latency measurements}
+\subsection{Latency Measurements}
 
 FPGA GPIO signals will be used to mark the start and end of the measurement windows mentioned.
 
-\subsubsection{Layer-dimension and hardware configuration sweeps}
+\subsubsection{Layer-Dimension and Hardware Configuration Sweeps}
 
 The measurement for each layer case will be from the layer descriptor acceptance to assertion of the
 accelerator’s layer done signal. For each case, architecture, and clock condition, we will run 50
 warm-ups followed by 2,500 timed runs~\cite{ji2026c2fdeploy}.
 
-\subsubsection{Model benchmarks}
+\subsubsection{Model Benchmarks}
 
 The measurement will be from the first layer descriptor acceptance to the accelerator’s class-valid
 signal. The class-valid signal means argmax at the last layer has chosen a winning class. For each
 model, architecture, and clock condition, we will run 5 warm-ups followed by 50 timed runs on the
 same test image~\cite{ji2026c2fdeploy}.
 
-\subsubsection{Statistics to report}
+\subsubsection{Statistics to Report}
 
 We will report mean, standard deviation, and median across timed runs~\cite{ji2026c2fdeploy}
 
-\subsection{PE utilization in core execution}
+\subsection{PE Utilization in Core Execution}
 
 PE utilization will be measured during core execution. The below formula describes PE utilization:
 
@@ -855,7 +866,7 @@ A multiply-and-accumulate (MAC) operation is considered useful if its input is w
 padding zero) and contributes to the output. We will report total useful MACs, useful MACs per
 full-layer cycle, and useful MACs per byte transferred in DDR.
 
-\subsection{Cycle counts and memory traffic}
+\subsection{Cycle Counts and Memory Traffic}
 
 For each layer, hardware counters will record cycle counts and the cycles spent in the following
 phases: planning, input loads, weight loads, bias loads, core execution cycles, output writes, and
@@ -872,17 +883,17 @@ input, weight, and output SRAM, we will measure reads, writes, and peak occupied
 For each hardware configuration tested on the board, we will report the FPGA’s LUT, flip-flop, BRAM,
 and DSP usage.
 
-\subsection{Energy measurement}
+\subsection{Energy Measurement}
 
 Board energy will be measured with the same measurement windows used in latency. Voltage across the
-Nexys Video’s 12V input and current into the board will be measured simultaneously. Their product
+Nexys Video’s 12~V input and current into the board will be measured simultaneously. Their product
 will be integrated over the measurement window to get energy. We will also get mean active board
 power by dividing the energy by the length of the GPIO-marked window.
 
-\subsection{Paired analysis}
+\subsection{Paired Analysis}
 
 For every case, we will show the raw values, which mapping leads or ties in each metric, and the
-percentage change relative to NCHW. We will compare cycle counts and latency at the common 20MHz
+percentage change relative to NCHW. We will compare cycle counts and latency at the common 20~MHz
 clock and at each build’s highest verified clock. We will favor lower cycles, latency, traffic,
 resource use, measured energy, and higher PE utilization. We will use the cycle phases, output tile
 counts, and stalls to explain the differences between NCHW and NHWC.
@@ -894,7 +905,16 @@ counts, and stalls to explain the differences between NCHW and NHWC.
 
 \chapter{Preliminary Findings\label{cha:Prelims}}
 
-This is an \emph{optional} chapter that reports on the feasibility of your project. You may be required by your adviser to have a preliminary work ready by the end of the semester.
+\section{MNIST CNN Training and Validation}
+
+The preliminary MNIST CNN run used a batch size of 128. The checkpoint at epoch 17 had the
+lowest validation loss.
+On the 10,000-image MNIST test set, software evaluation gave 98.65\% accuracy for the
+floating-point model and 98.62\% for the quantized model.
+
+In RTL simulation of the streamed-descriptor accelerator, both mappings matched the reference
+layer outputs on all 20 held-out images in the replay set. Software argmax of the simulated
+outputs gave the correct class for every image.
 
 \cleardoublepage{}
 
