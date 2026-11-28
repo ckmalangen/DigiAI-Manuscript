@@ -263,6 +263,8 @@ are contiguous. The rows of the lowered kernel matrix are also rearranged accord
 \end{figure}
 \end{samepage}
 
+\pagebreak[0]
+\begin{samepage}
 \subsection{Architectures}
 
 \subsubsection{Common Configurations}
@@ -270,6 +272,7 @@ are contiguous. The rows of the lowered kernel matrix are also rearranged accord
 Table~\ref{tab:common-configurations} lists the settings identical in each paired comparison
 between the two architectures.
 
+\nopagebreak
 \begin{table}[H]
     \centering
     \ssp % Restore the class single spacing after array redefines tabular.
@@ -311,6 +314,7 @@ between the two architectures.
         layer is the last layer\par
     }
 \end{table}
+\end{samepage}
 
 \subsubsection{Tiling Loop}
 
@@ -337,6 +341,7 @@ The tile size limits are described in Table~\ref{tab:tile-size-limits}.
 
 \begin{table}[H]
     \centering
+    \ssp
     \begin{tabular}{|c|c|}
         \hline
         \textbf{Tile dimension} &
@@ -443,19 +448,21 @@ comparisons to ensure fairness. Fit, timing, and correctness failures will be re
 
 \subsection{Clocks to Test}
 
-The sweeps and model benchmarks will be run on both architectures at a common clock 20~MHz and each
-architecture’s highest verified clock. The highest verified clock will be the highest tested clock
-that meets routed timing and pass board correctness checks. The post-route WNS will be used to
-estimate this. The Vivado documentation states the following formula for the max
-frequency~\cite{amd2026frequency}:
+The sweeps and model benchmarks will be run on both architectures at a common clock of 20~MHz and
+each architecture’s highest verified clock. The highest verified clock will be the highest tested
+clock that meets routed timing and passes board correctness checks.
 
-\[
-  \begin{aligned}
-    F_{\mathrm{max}} &= \frac{1000}{T - \mathrm{WNS}} \\[.5em]
-    T &= \text{target clock period in ns} \\
-    \mathrm{WNS} &= \text{worst negative slack in ns}
-  \end{aligned}
-\]
+\pagebreak[0]
+\begin{samepage}
+We will estimate the maximum frequency in MHz from post-route timing using
+\eqref{eq:max-frequency}~\cite{amd2026frequency}.
+\begin{equation}
+  F_{\mathrm{max}} = \frac{1000}{T - \mathrm{WNS}},
+  \label{eq:max-frequency}
+\end{equation}
+where \(T\) is the target clock period and \(\mathrm{WNS}\) is the worst negative slack, both in ns.
+\par
+\end{samepage}
 
 \subsection{Test Automation}
 
@@ -893,10 +900,17 @@ power by dividing the energy by the length of the GPIO-marked window.
 \subsection{Paired Analysis}
 
 For every case, we will show the raw values, which mapping leads or ties in each metric, and the
-percentage change relative to NCHW. We will compare cycle counts and latency at the common 20~MHz
-clock and at each build’s highest verified clock. We will favor lower cycles, latency, traffic,
-resource use, measured energy, and higher PE utilization. We will use the cycle phases, output tile
-counts, and stalls to explain the differences between NCHW and NHWC.
+percentage change relative to NCHW. The formula describing percentage-change is shown below.
+\begin{equation}
+  \text{Percentage change (\%)} = 100 \times
+  \frac{\text{NHWC value} - \text{NCHW value}}{\text{NCHW value}}.
+  \label{eq:percentage-change}
+\end{equation}
+
+We will also compare cycle counts and latency at the common 20~MHz clock and at each build’s
+highest verified clock. We will favor lower cycles, latency, traffic, resource use, measured energy,
+and higher PE utilization. We will use the cycle phases, output tile counts, and stalls to explain
+the differences between NCHW and NHWC.
 
 \cleardoublepage{}
 
@@ -905,16 +919,7 @@ counts, and stalls to explain the differences between NCHW and NHWC.
 
 \chapter{Preliminary Findings\label{cha:Prelims}}
 
-\section{MNIST CNN Training and Validation}
-
-The preliminary MNIST CNN run used a batch size of 128. The checkpoint at epoch 17 had the
-lowest validation loss.
-On the 10,000-image MNIST test set, software evaluation gave 98.65\% accuracy for the
-floating-point model and 98.62\% for the quantized model.
-
-In RTL simulation of the streamed-descriptor accelerator, both mappings matched the reference
-layer outputs on all 20 held-out images in the replay set. Software argmax of the simulated
-outputs gave the correct class for every image.
+This is an \emph{optional} chapter that reports on the feasibility of your project. You may be required by your adviser to have a preliminary work ready by the end of the semester.
 
 \cleardoublepage{}
 
